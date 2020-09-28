@@ -31,25 +31,24 @@ const getMaxElement = (arr) => {
   return maxElement;
 };
 
-/* пригодится позже*/
-/* const color = (min, max) => {
+const color = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
-};*/
+};
+
+const getColorByName = (name) => {
+  if (name === `Вы`) {
+    return RED;
+  } else {
+    return `hsl(240, ${Math.round(Math.random() * 100)}%, 50%)`;
+  }
+};
 
 window.renderStatistics = function (ctx, players, times) {
   const maxTime = getMaxElement(times);
   const textPosX = CLOUD_X + GAP + FONT_GAP;
   const textPosY = CLOUD_Y + GAP + TEXT_HEIGHT;
-
-  const getColorByName = (name) => {
-    if (name === `Вы`) {
-      ctx.fillStyle = RED;
-    } else {
-      ctx.fillStyle = `hsl(240, ${Math.round(Math.random() * 100)}%, 50%)`;
-    }
-  };
 
   renderCloud(ctx, CLOUD_X + GAP, CLOUD_Y + GAP, OPACITY_BLACK);
   renderCloud(ctx, CLOUD_X, CLOUD_Y, WHITE);
@@ -63,9 +62,7 @@ window.renderStatistics = function (ctx, players, times) {
 
     ctx.fillText(players[i], currentPosX, CLOUD_Y + GAP + BAR_HEIGHT + TEXT_HEIGHT);
     ctx.fillText(Math.round(times[i]).toString(), currentPosX, currentPosY);
-
-    getColorByName(players[i]);
-
+    ctx.fillStyle = getColorByName(players[i]);
     ctx.fillRect(
         currentPosX,
         currentPosY + GAP,
