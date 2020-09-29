@@ -10,9 +10,9 @@ const TEXT_HEIGHT = 20;
 const BAR_WIDTH = 40;
 const BAR_HEIGHT = CLOUD_HEIGHT - GAP - TEXT_HEIGHT - GAP;
 const OPACITY_BLACK = `rgba(0, 0, 0, 0.3)`;
-//const BLACK = `rgba(0, 0, 0, 1)`;
+const BLACK = `rgba(0, 0, 0, 1)`;
 const WHITE = `rgba(255, 255, 255, 1)`;
-//const RED = `rgba(255, 0, 0, 1)`;
+const RED = `rgba(255, 0, 0, 1)`;
 const HOORAY = `Ура Вы победили!`;
 const RESULTS = `Список результатов:`;
 
