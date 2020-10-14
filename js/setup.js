@@ -1,6 +1,6 @@
 'use strict';
 
-const Colors = {
+const colors = {
   LIGHT_BLUE: `rgb(101, 137, 164)`,
   PINK: `rgb(241, 43, 107)`,
   VIOLET: `rgb(146, 100, 161)`,
@@ -16,6 +16,23 @@ const Colors = {
   AQUAMARINE_FIREBALL: `rgb(92, 230, 192)`,
   MAGENTA_FIREBALL: `rgb(232, 72, 213)`,
   YELLOW_FIREBALL: `rgb(230, 232, 72)`
+};
+
+const colorsMap = {
+  BLACK: `black`,
+  RED: `red`,
+  BLUE: `blue`,
+  YELLOW: `yellow`,
+  GREEN: `green`
+};
+
+const getHexColor = (rgb) => {
+  rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+
+  return (rgb && rgb.length === 4) ? `#` +
+    (`0` + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+    (`0` + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+    (`0` + parseInt(rgb[3], 10).toString(16)).slice(-2) : ``;
 };
 
 const WIZARD_NUMBER = 4;
@@ -40,25 +57,26 @@ const WIZARD_SURNAMES = [
   ` Ирвинг`
 ];
 const COAT_COLORS = [
-  Colors.LIGHT_BLUE,
-  Colors.PINK,
-  Colors.VIOLET,
-  Colors.LIGHT_GREEN,
-  Colors.SPECIAL_YELLOW,
-  Colors.BLACK
+  colors.LIGHT_BLUE,
+  colors.PINK,
+  colors.VIOLET,
+  colors.LIGHT_GREEN,
+  colors.SPECIAL_YELLOW,
+  colors.BLACK
 ];
-const EYE_COLORS = [Colors.BLACK,
-  Colors.RED,
-  Colors.BLUE,
-  Colors.YELLOW,
-  Colors.GREEN
+const EYE_COLORS = [
+  colorsMap.BLACK,
+  colorsMap.RED,
+  colorsMap.BLUE,
+  colorsMap.YELLOW,
+  colorsMap.GREEN
 ];
 const FIREBALL_COLORS = [
-  Colors.RED_FIREBALL,
-  Colors.BLUE_FIREBALL,
-  Colors.AQUAMARINE_FIREBALL,
-  Colors.MAGENTA_FIREBALL,
-  Colors.YELLOW_FIREBALL
+  colors.RED_FIREBALL,
+  colors.BLUE_FIREBALL,
+  colors.AQUAMARINE_FIREBALL,
+  colors.MAGENTA_FIREBALL,
+  colors.YELLOW_FIREBALL
 ];
 const userDialog = document.querySelector(`.setup`);
 const similarListElement = userDialog.querySelector(`.setup-similar-list`);
@@ -172,7 +190,7 @@ const changeFireballColor = () => {
   let currentFireballColor = getFireballColor();
 
   fireballColor.style = `background-color: ${currentFireballColor}`;
-  wizardFireballColorInput.value = currentFireballColor;
+  wizardFireballColorInput.value = getHexColor(currentFireballColor);
 };
 
 setupOpen.addEventListener(`click`, function () {
