@@ -169,10 +169,10 @@ const onEyesColorChange = () => {
 
 const onFireballColorChange = () => {
 
-  let currentFireballColor = getFireballColor();
+  let currentFireballColor = getHexColor(getFireballColor());
 
-  wizardEyes.style = `fill: ${currentFireballColor}`;
-  wizardEyesColorInput.value = currentFireballColor;
+  wizardFireballWrap.style = `background-color: ${currentFireballColor}`;
+  wizardFireballColorInput.value = currentFireballColor;
 };
 
 const openPopup = () => {
