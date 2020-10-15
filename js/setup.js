@@ -1,5 +1,6 @@
 'use strict';
-const Colors = {
+
+const colors = {
   LIGHT_BLUE: `rgb(101, 137, 164)`,
   PINK: `rgb(241, 43, 107)`,
   VIOLET: `rgb(146, 100, 161)`,
@@ -10,23 +11,122 @@ const Colors = {
   BLUE: `rgb(0, 0, 255)`,
   YELLOW: `rgb(255, 255, 0)`,
   GREEN: `rgb(0, 128, 0)`,
+  RED_FIREBALL: `rgb(238, 72, 48)`,
+  BLUE_FIREBALL: `rgb(48, 168, 238)`,
+  AQUAMARINE_FIREBALL: `rgb(92, 230, 192)`,
+  MAGENTA_FIREBALL: `rgb(232, 72, 213)`,
+  YELLOW_FIREBALL: `rgb(230, 232, 72)`
 };
 
-const WIZARD_NAMES = [`Иван`, `Хуан Себастьян`, `Мария`, `Кристоф`, `Виктор`, `Юлия`, `Люпита`, `Вашингтон`];
-const WIZARD_SURNAMES = [` да Марья`, ` Верон`, ` Мирабелла`, ` Вальц`, ` Онопко`, ` Топольницкая`, ` Нионго`, ` Ирвинг`];
-const COAT_COLORS = [Colors.LIGHT_BLUE, Colors.PINK, Colors.VIOLET, Colors.LIGHT_GREEN, Colors.SPECIAL_YELLOW, Colors.BLACK];
-const EYE_COLORS = [Colors.BLACK, Colors.RED, Colors.BLUE, Colors.YELLOW, Colors.GREEN];
+const colorsMap = {
+  BLACK: `black`,
+  RED: `red`,
+  BLUE: `blue`,
+  YELLOW: `yellow`,
+  GREEN: `green`
+};
+
+const WIZARD_NUMBER = 4;
+
+const WIZARD_NAMES = [
+  `Иван`,
+  `Хуан Себастьян`,
+  `Мария`,
+  `Кристоф`,
+  `Виктор`,
+  `Юлия`,
+  `Люпита`,
+  `Вашингтон`
+];
+
+const WIZARD_SURNAMES = [
+  ` да Марья`,
+  ` Верон`,
+  ` Мирабелла`,
+  ` Вальц`,
+  ` Онопко`,
+  ` Топольницкая`,
+  ` Нионго`,
+  ` Ирвинг`
+];
+
+const COAT_COLORS = [
+  colors.LIGHT_BLUE,
+  colors.PINK,
+  colors.VIOLET,
+  colors.LIGHT_GREEN,
+  colors.SPECIAL_YELLOW,
+  colors.BLACK
+];
+
+const EYE_COLORS = [
+  colorsMap.BLACK,
+  colorsMap.RED,
+  colorsMap.BLUE,
+  colorsMap.YELLOW,
+  colorsMap.GREEN
+];
+
+const FIREBALL_COLORS = [
+  colors.RED_FIREBALL,
+  colors.BLUE_FIREBALL,
+  colors.AQUAMARINE_FIREBALL,
+  colors.MAGENTA_FIREBALL,
+  colors.YELLOW_FIREBALL
+];
+
 const userDialog = document.querySelector(`.setup`);
-const fragment = document.createDocumentFragment();
 const similarListElement = userDialog.querySelector(`.setup-similar-list`);
-const similarWizardTemplate = document.querySelector(`#similar-wizard-template`).content.querySelector(`.setup-similar-item`);
-const wizards = [];
+const similarWizardTemplate = document.querySelector(`#similar-wizard-template`)
+  .content
+  .querySelector(`.setup-similar-item`);
+const setupOpen = document.querySelector(`.setup-open`);
+const setup = document.querySelector(`.setup`);
+const setupClose = setup.querySelector(`.setup-close`);
+const setupPlayer = setup.querySelector(`.setup-player`);
+const setupWizardForm = setup.querySelector(`.setup-wizard-form`);
+const setupUserName = setup.querySelector(`.setup-user-name`);
+const wizardCoat = setup.querySelector(`.wizard-coat`);
+const wizardEyes = setup.querySelector(`.wizard-eyes`);
+const wizardFireballWrap = setup.querySelector(`.setup-fireball-wrap`);
+const wizardFireball = setup.querySelector(`.setup-fireball`);
+const wizardCoatColorInput = setup.querySelector(`input[name="coat-color"]`);
+const wizardEyesColorInput = setup.querySelector(`input[name="eyes-color"]`);
+const wizardFireballColorInput = setup.querySelector(`input[name="fireball-color"]`);
 
-const getWizardName = () => WIZARD_NAMES[Math.floor(Math.random() * WIZARD_NAMES.length)] + WIZARD_SURNAMES[Math.floor(Math.random() * WIZARD_SURNAMES.length)];
-const getCoatColor = () => COAT_COLORS[Math.floor(Math.random() * COAT_COLORS.length)];
-const getEyesColor = () => EYE_COLORS[Math.floor(Math.random() * EYE_COLORS.length)];
+const getRandomArrayElement = (array) => {
+  return array[Math.floor(Math.random() * array.length)];
+};
 
-const renderWizard = (wizard) => {
+const getHexColor = (rgb) => {
+  rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
+
+  return (rgb && rgb.length === 4) ? `#` +
+    (`0` + parseInt(rgb[1], 10).toString(16)).slice(-2) +
+    (`0` + parseInt(rgb[2], 10).toString(16)).slice(-2) +
+    (`0` + parseInt(rgb[3], 10).toString(16)).slice(-2) : ``;
+};
+
+const getWizardName = () => getRandomArrayElement(WIZARD_NAMES) + getRandomArrayElement(WIZARD_SURNAMES);
+const getCoatColor = () => getRandomArrayElement(COAT_COLORS);
+const getEyesColor = () => getRandomArrayElement(EYE_COLORS);
+const getFireballColor = () => getRandomArrayElement(FIREBALL_COLORS);
+
+const generateWizards = (number) => {
+  const wizards = [];
+
+  for (let i = 0; i < number; i++) {
+    wizards.push({
+      name: getWizardName(),
+      coatColor: getCoatColor(),
+      eyesColor: getEyesColor()
+    });
+  }
+
+  return wizards;
+};
+
+const createWizard = (wizard) => {
   const wizardElement = similarWizardTemplate.cloneNode(true);
 
   wizardElement.querySelector(`.setup-similar-label`).textContent = wizard.name;
@@ -36,16 +136,95 @@ const renderWizard = (wizard) => {
   return wizardElement;
 };
 
-for (let i = 0; i < 4; i++) {
-  wizards.push({
-    name: getWizardName(),
-    coatColor: getCoatColor(),
-    eyesColor: getEyesColor()
+const renderWizards = (array) => {
+  const fragment = document.createDocumentFragment();
+
+  for (let i = 0; i < array.length; i++) {
+    fragment.appendChild(createWizard(array[i]));
+  }
+
+  similarListElement.appendChild(fragment);
+};
+
+const onPopupEscPress = (evt) => {
+  if (document.activeElement !== setupUserName && evt.key === `Escape`) {
+    evt.preventDefault();
+    closePopup();
+  }
+};
+
+const onCoatColorChange = () => {
+  let currentCoatColor = getCoatColor();
+
+  wizardCoat.style = `fill: ${currentCoatColor}`;
+  wizardCoatColorInput.value = currentCoatColor;
+};
+
+const onEyesColorChange = () => {
+  let currentEyesColor = getEyesColor();
+
+  wizardEyes.style = `fill: ${currentEyesColor}`;
+  wizardEyesColorInput.value = currentEyesColor;
+};
+
+const onFireballColorChange = () => {
+
+  let currentFireballColor = getHexColor(getFireballColor());
+
+  wizardFireballWrap.style = `background-color: ${currentFireballColor}`;
+  wizardFireballColorInput.value = currentFireballColor;
+};
+
+const openPopup = () => {
+  setup.classList.remove(`hidden`);
+
+  document.addEventListener(`keydown`, onPopupEscPress);
+
+  setupPlayer.addEventListener(`click`, (evt) => {
+    if (evt.target === wizardCoat) {
+      onCoatColorChange();
+    } else if (evt.target === wizardEyes) {
+      onEyesColorChange();
+    } else if (evt.target === wizardFireball) {
+      onFireballColorChange();
+    }
   });
-  fragment.appendChild(renderWizard(wizards[i]));
-}
+};
 
-similarListElement.appendChild(fragment);
+const closePopup = () => {
+  setup.classList.add(`hidden`);
 
+  document.removeEventListener(`keydown`, onPopupEscPress);
+
+  setupPlayer.removeEventListener(`click`, (evt) => {
+    if (evt.target === wizardCoat) {
+      onCoatColorChange();
+    } else if (evt.target === wizardEyes) {
+      onEyesColorChange();
+    } else if (evt.target === wizardFireball) {
+      onFireballColorChange();
+    }
+  });
+};
+
+setupOpen.addEventListener(`click`, openPopup);
+
+setupOpen.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    openPopup();
+  }
+});
+
+setupClose.addEventListener(`click`, closePopup);
+
+setupClose.addEventListener(`keydown`, (evt) => {
+  if (evt.key === `Enter`) {
+    closePopup();
+  }
+});
+
+setupWizardForm.addEventListener(`submit`, closePopup);
+
+const wizards = generateWizards(WIZARD_NUMBER);
+renderWizards(wizards);
 userDialog.querySelector(`.setup-similar`).classList.remove(`hidden`);
-userDialog.classList.remove(`hidden`);
