@@ -33,8 +33,6 @@
 
   const getWizardName = () => window.util.getRandomArrayElement(WIZARD_NAMES) +
     window.util.getRandomArrayElement(WIZARD_SURNAMES);
-  const getCoatColor = () => window.util.getRandomArrayElement(window.dialog.COAT_COLORS);
-  const getEyesColor = () => window.util.getRandomArrayElement(window.dialog.EYE_COLORS);
 
   const generateWizards = (number) => {
     const wizards = [];
@@ -42,8 +40,8 @@
     for (let i = 0; i < number; i++) {
       wizards.push({
         name: getWizardName(),
-        coatColor: getCoatColor(),
-        eyesColor: getEyesColor()
+        coatColor: window.dialog.getCoatColor(),
+        eyesColor: window.dialog.getEyesColor()
       });
     }
 

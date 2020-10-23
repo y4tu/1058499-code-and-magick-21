@@ -27,14 +27,6 @@
     GREEN: `green`
   };
 
-  const FIREBALL_COLORS = [
-    colors.RED_FIREBALL,
-    colors.BLUE_FIREBALL,
-    colors.AQUAMARINE_FIREBALL,
-    colors.MAGENTA_FIREBALL,
-    colors.YELLOW_FIREBALL
-  ];
-
   const COAT_COLORS = [
     colors.LIGHT_BLUE,
     colors.PINK,
@@ -52,85 +44,78 @@
     colorsMap.GREEN
   ];
 
+  const FIREBALL_COLORS = [
+    colors.RED_FIREBALL,
+    colors.BLUE_FIREBALL,
+    colors.AQUAMARINE_FIREBALL,
+    colors.MAGENTA_FIREBALL,
+    colors.YELLOW_FIREBALL
+  ];
+
   const setup = document.querySelector(`.setup`);
   const setupOpen = document.querySelector(`.setup-open`);
   const setupClose = setup.querySelector(`.setup-close`);
   const setupPlayer = setup.querySelector(`.setup-player`);
   const setupWizardForm = setup.querySelector(`.setup-wizard-form`);
   const setupUserName = setup.querySelector(`.setup-user-name`);
+  const setupFireball = setup.querySelector(`.setup-fireball`);
   const upload = document.querySelector(`.upload`);
   const wizardCoat = setup.querySelector(`.wizard-coat`);
   const wizardEyes = setup.querySelector(`.wizard-eyes`);
-  const wizardFireballWrap = setup.querySelector(`.setup-fireball-wrap`);
-  const wizardFireball = setup.querySelector(`.setup-fireball`);
+  const wizardFireball = setup.querySelector(`.setup-fireball-wrap`);
   const wizardCoatColorInput = setup.querySelector(`input[name="coat-color"]`);
   const wizardEyesColorInput = setup.querySelector(`input[name="eyes-color"]`);
   const wizardFireballColorInput = setup.querySelector(`input[name="fireball-color"]`);
+  const coatColor = window.util.getRandomColor(COAT_COLORS);
+  const eyesColor = window.util.getRandomColor(EYE_COLORS);
+  const fireballColor = window.util.getHexColor(window.util.getRandomColor(FIREBALL_COLORS));
 
-  const getFireballColor = () => window.util.getRandomArrayElement(FIREBALL_COLORS);
-
-  const onPopupEscPress = (evt) => {
-    if (document.activeElement !== setupUserName && evt.key === `Escape`) {
-      evt.preventDefault();
-      closePopup();
+  const setWizardColorChangeIf = (evt) => {
+    if (evt.target === wizardCoat) {
+      onCoatClick();
+    } else if (evt.target === wizardEyes) {
+      onEyesClick();
+    } else if (evt.target === setupFireball) {
+      onFireballClick();
     }
   };
 
-  const onCoatColorChange = () => {
-    let currentCoatColor = window.setup.getCoatColor();
-
-    wizardCoat.style = `fill: ${currentCoatColor}`;
-    wizardCoatColorInput.value = currentCoatColor;
+  const onCoatClick = () => {
+    window.util.colorChange(wizardCoat, wizardCoatColorInput, coatColor);
   };
 
-  const onEyesColorChange = () => {
-    let currentEyesColor = window.setup.getEyesColor();
-
-    wizardEyes.style = `fill: ${currentEyesColor}`;
-    wizardEyesColorInput.value = currentEyesColor;
+  const onEyesClick = () => {
+    window.util.colorChange(wizardEyes, wizardEyesColorInput, eyesColor);
   };
 
-  const onFireballColorChange = () => {
+  const onFireballClick = () => {
+    window.util.colorChange(wizardFireball, wizardFireballColorInput, fireballColor);
+  };
 
-    let currentFireballColor = window.util.getHexColor(getFireballColor());
-
-    wizardFireballWrap.style = `background-color: ${currentFireballColor}`;
-    wizardFireballColorInput.value = currentFireballColor;
+  const onPopupEscPress = () => {
+    if (document.activeElement !== setupUserName) {
+      closePopup();
+    }
   };
 
   const openPopup = () => {
     setup.classList.remove(`hidden`);
 
-    document.addEventListener(`keydown`, onPopupEscPress);
-
-    setupPlayer.addEventListener(`click`, (evt) => {
-      if (evt.target === wizardCoat) {
-        onCoatColorChange();
-      } else if (evt.target === wizardEyes) {
-        onEyesColorChange();
-      } else if (evt.target === wizardFireball) {
-        onFireballColorChange();
-      }
-    });
+    window.util.isEscapeEventAdd(document, onPopupEscPress);
+    window.util.clickEventAdd(setupPlayer, setWizardColorChangeIf);
+    window.util.clickEventAdd(setupClose, closePopup);
+    window.util.isEnterEventAdd(setupClose, closePopup);
   };
 
   const closePopup = () => {
     setup.style.top = `80px`;
     setup.style.left = `50%`;
-
     setup.classList.add(`hidden`);
 
-    window.util.isEscapeEventAdd(document, onPopupEscPress);
-
-    setupPlayer.removeEventListener(`click`, (evt) => {
-      if (evt.target === wizardCoat) {
-        onCoatColorChange();
-      } else if (evt.target === wizardEyes) {
-        onEyesColorChange();
-      } else if (evt.target === wizardFireball) {
-        onFireballColorChange();
-      }
-    });
+    window.util.isEscapeEventRemove(document, onPopupEscPress);
+    window.util.clickEventRemove(setupPlayer, setWizardColorChangeIf);
+    window.util.clickEventRemove(setupClose, closePopup);
+    window.util.isEnterEventRemove(setupClose, closePopup);
   };
 
   window.dialog = {
@@ -143,8 +128,6 @@
 
   window.util.clickEventAdd(setupOpen, openPopup);
   window.util.isEnterEventAdd(setupOpen, openPopup);
-  window.util.clickEventAdd(setupClose, closePopup);
-  window.util.isEnterEventAdd(setupClose, closePopup);
   window.util.submitEventAdd(setupWizardForm, closePopup);
   window.slider.moveElement(upload, setup);
 })();

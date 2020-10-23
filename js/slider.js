@@ -36,7 +36,7 @@
           document.removeEventListener(`mousemove`, onMouseMove);
           document.removeEventListener(`mouseup`, onMouseUp);
 
-          if (dragged === true) {
+          if (dragged) {
             const onClickPreventDefault = (clickEvt) => {
               clickEvt.preventDefault();
               handleElement.removeEventListener(`click`, onClickPreventDefault);
