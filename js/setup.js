@@ -25,8 +25,7 @@
     ` Ирвинг`
   ];
 
-  const userDialog = document.querySelector(`.setup`);
-  const similarListElement = userDialog.querySelector(`.setup-similar-list`);
+  const similarListElement = window.dialog.setup.querySelector(`.setup-similar-list`);
   const similarWizardTemplate = document.querySelector(`#similar-wizard-template`)
     .content
     .querySelector(`.setup-similar-item`);
@@ -70,7 +69,7 @@
 
   const wizards = generateWizards(WIZARD_NUMBER);
   renderWizards(wizards);
-  userDialog.querySelector(`.setup-similar`).classList.remove(`hidden`);
+  window.dialog.setup.querySelector(`.setup-similar`).classList.remove(`hidden`);
 
   window.util.clickEventAdd(window.dialog.setupOpen, window.dialog.openPopup);
 })();

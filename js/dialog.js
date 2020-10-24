@@ -1,6 +1,9 @@
 'use strict';
 
 (() => {
+  const START_POSITION_X = `50%`;
+  const START_POSITION_Y = `80px`;
+
   const colors = {
     LIGHT_BLUE: `rgb(101, 137, 164)`,
     PINK: `rgb(241, 43, 107)`,
@@ -66,30 +69,58 @@
   const wizardCoatColorInput = setup.querySelector(`input[name="coat-color"]`);
   const wizardEyesColorInput = setup.querySelector(`input[name="eyes-color"]`);
   const wizardFireballColorInput = setup.querySelector(`input[name="fireball-color"]`);
-  const coatColor = window.util.getRandomColor(COAT_COLORS);
-  const eyesColor = window.util.getRandomColor(EYE_COLORS);
-  const fireballColor = window.util.getHexColor(window.util.getRandomColor(FIREBALL_COLORS));
 
-  const setWizardColorChangeIf = (evt) => {
-    if (evt.target === wizardCoat) {
-      onCoatClick();
-    } else if (evt.target === wizardEyes) {
-      onEyesClick();
-    } else if (evt.target === setupFireball) {
-      onFireballClick();
+  let coatColor = null;
+  let eyesColor = null;
+  let fireballColor = null;
+
+  const getCoatColor = () => window.util.getRandomArrayElement(COAT_COLORS);
+
+  const getEyesColor = () => window.util.getRandomArrayElement(EYE_COLORS);
+
+  const getFireballColor = () => window.util.getHexColor(window.util.getRandomColor(FIREBALL_COLORS));
+
+  const colorChange = (color, input, getAction, handle) => {
+    color = getAction();
+
+    if (color !== input) {
+      handle();
+    } else {
+      (() => {
+        color = getAction();
+      })();
+      handle();
     }
+
+    return color;
   };
 
   const onCoatClick = () => {
-    window.util.colorChange(wizardCoat, wizardCoatColorInput, coatColor);
+    window.util.colorAccept(wizardCoat, wizardCoatColorInput, coatColor);
   };
 
   const onEyesClick = () => {
-    window.util.colorChange(wizardEyes, wizardEyesColorInput, eyesColor);
+    window.util.colorAccept(wizardEyes, wizardEyesColorInput, eyesColor);
   };
 
   const onFireballClick = () => {
-    window.util.colorChange(wizardFireball, wizardFireballColorInput, fireballColor);
+    window.util.colorAccept(wizardFireball, wizardFireballColorInput, fireballColor);
+  };
+
+  const onWizardColorChange = (evt) => {
+    switch (evt.target) {
+      case wizardCoat:
+        coatColor = colorChange(coatColor, wizardCoatColorInput, getCoatColor, onCoatClick);
+        break;
+
+      case wizardEyes:
+        eyesColor = colorChange(eyesColor, wizardEyesColorInput, getEyesColor, onEyesClick);
+        break;
+
+      case setupFireball:
+        fireballColor = colorChange(fireballColor, wizardFireballColorInput, getFireballColor, onFireballClick);
+        break;
+    }
   };
 
   const onPopupEscPress = () => {
@@ -102,32 +133,34 @@
     setup.classList.remove(`hidden`);
 
     window.util.isEscapeEventAdd(document, onPopupEscPress);
-    window.util.clickEventAdd(setupPlayer, setWizardColorChangeIf);
+    window.util.clickEventAdd(setupPlayer, onWizardColorChange);
     window.util.clickEventAdd(setupClose, closePopup);
     window.util.isEnterEventAdd(setupClose, closePopup);
+    window.util.submitEventAdd(setupWizardForm, closePopup);
   };
 
   const closePopup = () => {
-    setup.style.top = `80px`;
-    setup.style.left = `50%`;
+    setup.style.top = START_POSITION_Y;
+    setup.style.left = START_POSITION_X;
     setup.classList.add(`hidden`);
 
     window.util.isEscapeEventRemove(document, onPopupEscPress);
-    window.util.clickEventRemove(setupPlayer, setWizardColorChangeIf);
+    window.util.clickEventRemove(setupPlayer, onWizardColorChange);
     window.util.clickEventRemove(setupClose, closePopup);
     window.util.isEnterEventRemove(setupClose, closePopup);
-  };
-
-  window.dialog = {
-    colors,
-    setupOpen,
-    getCoatColor: () => window.util.getRandomArrayElement(COAT_COLORS),
-    getEyesColor: () => window.util.getRandomArrayElement(EYE_COLORS),
-    openPopup: openPopup(),
+    window.util.submitEventRemove(setupWizardForm, closePopup);
   };
 
   window.util.clickEventAdd(setupOpen, openPopup);
   window.util.isEnterEventAdd(setupOpen, openPopup);
-  window.util.submitEventAdd(setupWizardForm, closePopup);
-  window.slider.moveElement(upload, setup);
+  window.gragAndDrop.moveElement(upload, setup);
+
+  window.dialog = {
+    setup,
+    colors,
+    setupOpen,
+    getCoatColor,
+    getEyesColor,
+    openPopup,
+  };
 })();
